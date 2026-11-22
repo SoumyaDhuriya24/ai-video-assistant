@@ -354,9 +354,10 @@ with st.sidebar:
     else:
         uploaded_file = st.file_uploader(
             "Upload recording", 
-            type=["mp3", "wav", "m4a", "mp4", "webm", "aac", "ogg"],
+            type=["mp3", "m4a", "wav", "mp4", "webm", "aac", "ogg"],
             label_visibility="collapsed"
         )
+        st.caption("💡 *Tip: Audio files (.m4a, .mp3) upload 10x-20x faster than .mp4!*")
         if uploaded_file is not None:
             upload_dir = "downloades"
             os.makedirs(upload_dir, exist_ok=True)
@@ -422,13 +423,31 @@ if run_btn:
             with progress_placeholder.container():
                 st.info("⚙️ Pipeline running — see sidebar for live status…")
 
-            update_step("audio", "active")
-            chunks = process_input(source)
-            update_step("audio", "done")
+            transcript = ""
+            # Instant-fetch YouTube transcript directly without heavy video/audio downloads
+            if source.startswith("http://") or source.startswith("https://"):
+                try:
+                    import re
+                    from youtube_transcript_api import YouTubeTranscriptApi
+                    match = re.search(r"(?:v=|\/|youtu\.be\/)([0-9A-Za-z_-]{11})", source)
+                    if match:
+                        v_id = match.group(1)
+                        t_list = YouTubeTranscriptApi.get_transcript(v_id)
+                        transcript = " ".join([entry['text'] for entry in t_list if entry.get('text')])
+                except Exception:
+                    transcript = ""
 
-            update_step("transcript", "active")
-            transcript = transcribe_all(chunks, language)
-            update_step("transcript", "done")
+            if not transcript:
+                update_step("audio", "active")
+                chunks = process_input(source)
+                update_step("audio", "done")
+
+                update_step("transcript", "active")
+                transcript = transcribe_all(chunks, language)
+                update_step("transcript", "done")
+            else:
+                update_step("audio", "done")
+                update_step("transcript", "done")
 
             update_step("title", "active")
             title = generate_title(transcript)
