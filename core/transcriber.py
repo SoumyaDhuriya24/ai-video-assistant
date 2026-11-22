@@ -131,4 +131,7 @@ def transcribe_all(chunks: list, language: str = "english") -> str:
 
     print("Transcription complete.")
 
-    return full_transcript.strip()  
+    final_text = full_transcript.strip()
+    if not final_text:
+        return "No spoken dialogue or speech was detected in this audio."
+    return final_text  

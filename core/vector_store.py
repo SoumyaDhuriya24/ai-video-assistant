@@ -23,11 +23,19 @@ def get_embeddings():
 def build_vector_store(transcript : str)->Chroma:
     print("Building vector Store")
 
+    # Guard against empty or whitespace-only transcript
+    clean_text = transcript.strip() if transcript else ""
+    if not clean_text:
+        clean_text = "No spoken dialogue or speech was detected in this recording."
+
     splitter = RecursiveCharacterTextSplitter(
         chunk_size = 500,
         chunk_overlap = 50
     )
-    chunks = splitter.split_text(transcript)
+    raw_chunks = splitter.split_text(clean_text)
+    chunks = [c.strip() for c in raw_chunks if c.strip()]
+    if not chunks:
+        chunks = [clean_text]
 
     docs = [
         Document(page_content=chunk, metadata = {'chunk_index' : i})
@@ -35,6 +43,18 @@ def build_vector_store(transcript : str)->Chroma:
     ]
 
     embeddings = get_embeddings()
+
+    # Reset any existing collection to avoid mixing meeting transcripts
+    try:
+        import chromadb
+        client = chromadb.PersistentClient(path=CHROMA_DIR)
+        try:
+            client.delete_collection(COLLECTION_NAME)
+        except Exception:
+            pass
+    except Exception:
+        pass
+
     vector_store = Chroma.from_documents(
         documents= docs,
         embedding=embeddings,

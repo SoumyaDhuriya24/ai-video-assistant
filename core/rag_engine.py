@@ -1,12 +1,12 @@
 import os
-from core.llm import get_llm as get_meta_llm
+from core.llm import get_llm
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from core.vector_store import build_vector_store, load_vector_store, get_retriever
 
-def get_llm():
-    return get_meta_llm(temperature=0.3)
+def get_rag_llm():
+    return get_llm(temperature=0.3)
 
 def format_docs(docs):
     return "\n\n".join([doc.page_content for doc in docs])
@@ -17,7 +17,7 @@ def build_rag_chain(transcript:str):
 
     retriever = get_retriever(vector_store, k = 4)
 
-    llm = get_llm()
+    llm = get_rag_llm()
 
     prompt = ChatPromptTemplate.from_messages(
 
@@ -55,7 +55,7 @@ def load_rag_chain():
     vector_store = load_vector_store()
     retriver = get_retriever()
 
-    llm = get_llm()
+    llm = get_rag_llm()
     prompt = ChatPromptTemplate.from_messages([
         (
             "system",

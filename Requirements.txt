@@ -16,11 +16,11 @@ torchaudio>=2.2.0                 # Audio utilities for PyTorch
 # ── Translation (Hindi → English) ─────────────────────────────────────────────
 deep-translator>=1.11.4           # Lightweight translation wrapper (Google backend)
 
-# ── LLM Orchestration — LangChain LCEL + Meta AI / Ollama ─────────────────────
+# ── LLM Orchestration — LangChain LCEL + Groq / Ollama ────────────────────────
 langchain>=0.2.0
 langchain-core>=0.2.0
 langchain-community>=0.2.0
-langchain-openai>=0.1.0           # OpenAI-compatible wrapper (Meta AI & Ollama /v1)
+langchain-openai>=0.1.0           # OpenAI-compatible wrapper (Groq & Ollama /v1)
 openai>=1.0.0                     # Official OpenAI Python client
 langchain-ollama>=0.1.0           # Native LangChain Ollama support
 

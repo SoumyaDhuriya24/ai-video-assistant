@@ -1,19 +1,19 @@
 #Actionableitems , decision , questions 
 
 import os
-from core.llm import get_llm as get_meta_llm
+from core.llm import get_llm
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 
 
-def get_llm():
-    return get_meta_llm(temperature=0.2)
+def get_extractor_llm():
+    return get_llm(temperature=0.2)
 
 
 
 def build_chain(system_prompt : str):
-    llm = get_llm()
+    llm = get_extractor_llm()
     return (
         RunnablePassthrough() | RunnableLambda(lambda x : {"text" : x}) |ChatPromptTemplate.from_messages([
         ("system", system_prompt),
@@ -22,6 +22,10 @@ def build_chain(system_prompt : str):
     )
 
 def extract_action_items(transcript:str)->str:
+    clean_text = transcript.strip() if transcript else ""
+    if not clean_text or "No spoken dialogue" in clean_text:
+        return "No action items found (no speech detected in recording)."
+
     chain = build_chain(
          "You are an expert meeting analyst. From the meeting transcript, "
         "extract all action items. For each provide:\n"
@@ -35,6 +39,10 @@ def extract_action_items(transcript:str)->str:
 
 
 def extract_key_decisions(transcript: str) -> str:
+    clean_text = transcript.strip() if transcript else ""
+    if not clean_text or "No spoken dialogue" in clean_text:
+        return "No key decisions found (no speech detected in recording)."
+
     chain = build_chain(
         "You are an expert meeting analyst. From the meeting transcript, "
         "extract all key decisions made. Format as a numbered list. "
@@ -44,6 +52,10 @@ def extract_key_decisions(transcript: str) -> str:
 
 
 def extract_questions(transcript: str) -> str:
+    clean_text = transcript.strip() if transcript else ""
+    if not clean_text or "No spoken dialogue" in clean_text:
+        return "No open questions found (no speech detected in recording)."
+
     chain = build_chain(
         "From the meeting transcript, extract all unresolved questions "
         "or topics needing follow-up. Format as a numbered list. "
