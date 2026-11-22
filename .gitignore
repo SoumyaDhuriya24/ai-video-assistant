@@ -1,0 +1,19 @@
+# Environment variables & secrets
+.env
+
+# Python cache & virtual environments
+.venv/
+env/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local vector database & temporary audio downloads
+vector_db/
+downloades/
+*.wav
+*.mp3
+*.mp4
+*.m4a
+*.webm
