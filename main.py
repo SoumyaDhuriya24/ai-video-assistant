@@ -7,7 +7,7 @@ try:
 except Exception:
     pass
 
-from utils.audio_processor import process_input
+from utils.audio_processor import process_input, cleanup_temp_files
 from core.transcriber import transcribe_all
 from core.summarizer import summarize, generate_title
 from core.extractor import extract_action_items, extract_key_decisions, extract_questions
@@ -18,7 +18,10 @@ def run_pipeline(source :str, language :str = "english") -> dict:
 
     chunks = process_input(source)
 
-    transcript = transcribe_all(chunks,language)
+    try:
+        transcript = transcribe_all(chunks,language)
+    finally:
+        cleanup_temp_files(chunks, source)
     print(f"raw transcription (first 300 characters ) {transcript[:300]}")
 
     title = generate_title(transcript)

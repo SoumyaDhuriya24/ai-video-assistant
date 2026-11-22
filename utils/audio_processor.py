@@ -89,3 +89,41 @@ def process_input(source: str) -> list:
     return chunks
 
 
+def cleanup_temp_files(chunks: list = None, source: str = None):
+    """
+    Safely deletes all temporary .wav chunks and intermediate downloaded/converted files.
+    Preserves original user files located outside the temporary downloads directory.
+    """
+    # 1. Delete all generated audio chunk files
+    if chunks:
+        for chunk in chunks:
+            if chunk and os.path.exists(chunk):
+                try:
+                    os.remove(chunk)
+                    print(f"🧹 Deleted temporary chunk: {os.path.basename(chunk)}")
+                except Exception as e:
+                    print(f"Warning: could not delete {chunk}: {e}")
+
+    # 2. Delete any intermediate _converted.wav or downloaded audio files
+    if source:
+        clean_source = source.strip().strip('"').strip("'")
+        base = os.path.splitext(clean_source)[0]
+        converted = f"{base}_converted.wav"
+        if os.path.exists(converted) and converted != clean_source:
+            try:
+                os.remove(converted)
+                print(f"🧹 Deleted converted WAV file: {os.path.basename(converted)}")
+            except Exception:
+                pass
+
+        # If it was downloaded from YouTube or uploaded into DOWNLOAD_DIR
+        abs_download_dir = os.path.abspath(DOWNLOAD_DIR)
+        if os.path.exists(clean_source) and os.path.abspath(clean_source).startswith(abs_download_dir):
+            try:
+                os.remove(clean_source)
+                print(f"🧹 Deleted temporary source file: {os.path.basename(clean_source)}")
+            except Exception:
+                pass
+
+
+

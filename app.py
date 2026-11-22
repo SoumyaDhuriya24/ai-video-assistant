@@ -12,7 +12,7 @@ try:
     static_ffmpeg.add_paths(weak=True)
 except Exception:
     pass
-from utils.audio_processor import process_input
+from utils.audio_processor import process_input, cleanup_temp_files
 from core.transcriber import transcribe_all
 from core.summarizer import summarize, generate_title
 from core.extractor import extract_action_items, extract_key_decisions, extract_questions
@@ -443,7 +443,10 @@ if run_btn:
                 update_step("audio", "done")
 
                 update_step("transcript", "active")
-                transcript = transcribe_all(chunks, language)
+                try:
+                    transcript = transcribe_all(chunks, language)
+                finally:
+                    cleanup_temp_files(chunks, source)
                 update_step("transcript", "done")
             else:
                 update_step("audio", "done")

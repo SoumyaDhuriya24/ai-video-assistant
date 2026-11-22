@@ -7,7 +7,7 @@ try:
 except Exception:
     pass
 
-from utils.audio_processor import process_input
+from utils.audio_processor import process_input, cleanup_temp_files
 from core.transcriber import transcribe_all
 from core.summarizer import summarize, generate_title
 from core.extractor import extract_action_items, extract_key_decisions, extract_questions
@@ -21,7 +21,10 @@ language = "english"   # "english" → Whisper, "hinglish" → Sarvam
 chunks = process_input(source)
 
 
-transcript = transcribe_all(chunks, language=language)
+try:
+    transcript = transcribe_all(chunks, language=language)
+finally:
+    cleanup_temp_files(chunks, source)
 print("\n" + "=" * 60)
 print("📝 TRANSCRIPT")
 print("=" * 60)
