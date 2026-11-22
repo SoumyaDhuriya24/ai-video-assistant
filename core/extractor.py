@@ -1,7 +1,12 @@
 #Actionableitems , decision , questions 
 
 import os
-from core.llm import get_llm
+import sys
+
+try:
+    from core.llm import get_llm
+except ImportError:
+    from llm import get_llm
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
