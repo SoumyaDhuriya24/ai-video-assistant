@@ -20,7 +20,7 @@ def get_llm(temperature: float = 0.3):
                 "Groq API Key not found! Please set GROQ_API_KEY in your .env file or choose Ollama."
             )
         base_url = os.getenv("GROQ_BASE_URL", "https://api.groq.com/openai/v1").strip()
-        model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant").strip()
+        model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b").strip()
 
         return ChatOpenAI(
             model=model,

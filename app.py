@@ -374,13 +374,13 @@ with st.sidebar:
         index=0 if os.getenv("LLM_PROVIDER", "groq").lower() == "groq" else 1,
     )
     if llm_provider == "Groq (Free Cloud)":
-        groq_model = st.text_input("Model Name", value=os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"))
+        groq_model = st.text_input("Model Name", value=os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"))
         groq_key_val = os.getenv("GROQ_API_KEY", "")
         groq_key_input = st.text_input("Groq API Key", value=groq_key_val, type="password", placeholder="gsk_...")
         if groq_key_input.strip():
             os.environ["GROQ_API_KEY"] = groq_key_input.strip()
         os.environ["LLM_PROVIDER"] = "groq"
-        os.environ["GROQ_MODEL"] = groq_model.strip() or "llama-3.1-8b-instant"
+        os.environ["GROQ_MODEL"] = groq_model.strip() or "openai/gpt-oss-120b"
     else:
         ollama_model = st.text_input("Model Name", value=os.getenv("OLLAMA_MODEL", "mistral:7b"))
         os.environ["LLM_PROVIDER"] = "ollama"
